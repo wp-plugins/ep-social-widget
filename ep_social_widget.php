@@ -1,10 +1,10 @@
 <?php
 /*
 Plugin Name: EP Social Widget
-Plugin URI: http://www.earthpeople.se
+Plugin URI: http://earthpeople.se/labs/2012/01/ep-social-widget-tiny-social-widget-for-wordpress/
 Description: Very small and easy to use widget to display social icons on your site. Facebook, twitter, flicker and RSS feed
 Author: Mattias Hedman, Earth People AB
-Version: 0.1.0
+Version: 0.1.1
 Author URI: http://www.earthpeople.se
 */
 
@@ -21,7 +21,7 @@ function load_epSocialWidget() {
 
 // Widget stylesheet
 function epSocialWidgetCss() {
-	echo '<link href="/wp-content/plugins/ep_social_widget/style.css" type="text/css" rel="stylesheet" media="screen" />';
+	echo '<link href="'.plugins_url('style.css', __FILE__).'" type="text/css" rel="stylesheet" media="screen" />';
 }
 
 class epSocialWidget extends WP_Widget{
@@ -57,19 +57,19 @@ class epSocialWidget extends WP_Widget{
 			<?php echo $before_title . $title . $after_title; ?>
 			
 			<?php if($rss == 1) : ?>
-			<a href="<?php bloginfo('rss2_url'); ?>" target="_blank"><img src="/wp-content/plugins/ep_social_widget/icon-rss.gif" alt="" /></a>
+			<a href="<?php bloginfo('rss2_url'); ?>" target="_blank"><img src="<?php echo plugins_url('icon-rss.gif', __FILE__); ?>" alt="" /></a>
 			<?php endif; ?>
 			
 			<?php if($twitter) : ?>
-			<a href="<?php echo $twitter; ?>" target="_blank"><img src="/wp-content/plugins/ep_social_widget/icon-twitter.gif" alt="" /></a>
+			<a href="<?php echo $twitter; ?>" target="_blank"><img src="<?php echo plugins_url('icon-twitter.gif', __FILE__); ?>" alt="" /></a>
 			<?php endif; ?>
 			
 			<?php if($facebook) : ?>
-			<a href="<?php echo $facebook; ?>" target="_blank"><img src="/wp-content/plugins/ep_social_widget/icon-facebook.gif" alt=""/></a>
+			<a href="<?php echo $facebook; ?>" target="_blank"><img src="<?php echo plugins_url('icon-facebook.gif', __FILE__); ?>" alt=""/></a>
 			<?php endif; ?>
 			
 			<?php if($flickr) : ?>
-			<a href="<?php echo $flickr; ?>" target="_blank"><img src="/wp-content/plugins/ep_social_widget/icon-flickr.gif" alt="" /></a>
+			<a href="<?php echo $flickr; ?>" target="_blank"><img src="<?php echo plugins_url('icon-flickr.gif', __FILE__); ?>" alt="" /></a>
 			<?php endif; ?>
 		</div>
 		
