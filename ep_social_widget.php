@@ -1,10 +1,10 @@
 <?php
 /*
 Plugin Name: EP Social Widget
-Plugin URI: http://earthpeople.se/labs/2012/01/ep-social-widget-tiny-social-widget-for-wordpress/
-Description: Very small and easy to use widget to display social icons on your site. Facebook, twitter, flicker and RSS feed
+Plugin URI: http://www.earthpeople.se
+Description: Very small and easy to use widget to display social icons on your site. Facebook, Twitter, Flickr, Google Plus and RSS feed
 Author: Mattias Hedman, Earth People AB
-Version: 0.1.1
+Version: 0.2.0
 Author URI: http://www.earthpeople.se
 */
 
@@ -48,6 +48,7 @@ class epSocialWidget extends WP_Widget{
 		$twitter = $instance['twitter'];
 		$flickr = $instance['flickr'];
 		$rss = $instance['rss'];
+		$gplus = $instance['gplus'];
 		
 		echo $before_widget;
 		?>
@@ -70,6 +71,10 @@ class epSocialWidget extends WP_Widget{
 			
 			<?php if($flickr) : ?>
 			<a href="<?php echo $flickr; ?>" target="_blank"><img src="<?php echo plugins_url('icon-flickr.gif', __FILE__); ?>" alt="" /></a>
+			<?php endif; ?>
+			
+			<?php if($gplus) : ?>
+			<a href="<?php echo $gplus; ?>" target="_blank"><img src="<?php echo plugins_url('icon-gplus.gif', __FILE__); ?>" alt="" /></a>
 			<?php endif; ?>
 		</div>
 		
@@ -118,12 +123,23 @@ class epSocialWidget extends WP_Widget{
 			$instance['flickr'] = '';
 		}
 		
+		if(!empty($new_instance['gplus'])) {
+			$gp = strip_tags($new_instance['gplus']);		
+			if(preg_match($pattern1, $gp) || preg_match($pattern2, $gp)){
+				$instance['gplus'] = $gp;
+			} else {
+				$instance['gplus'] = 'http://'.$gp;
+			}		
+		} else {
+			$instance['gplus'] = '';
+		}
+		
 		return $instance;
 	}
 
 	// Widget backend
 	function form($instance) {
-		$default = array('title' =>'', 'twitter'=>'','facebook'=>'','flickr'=>'','rss'=>'');
+		$default = array('title' =>'', 'twitter'=>'','facebook'=>'','flickr'=>'','rss'=>'', 'gplus' =>'');
 		$instance = wp_parse_args((array)$instance,$default);
 	?>
 		<!-- TITLE -->
@@ -144,23 +160,30 @@ class epSocialWidget extends WP_Widget{
 		
 		<!-- Twitter -->
 		<p>
-			<label for="<?php echo $this->get_field_id('twitter'); ?>"><?php echo __('Twitter link:'); ?></label>
+			<label for="<?php echo $this->get_field_id('twitter'); ?>"><?php echo __('Twitter profile link:'); ?></label>
 			<br />
 			<input type="text" id="<?php echo $this->get_field_id('twitter'); ?>" name="<?php echo $this->get_field_name('twitter'); ?>" value="<?php echo $instance['twitter']; ?>" class="widefat" />
 		</p>
 		
 		<!-- Facebook -->
 		<p>
-			<label for="<?php echo $this->get_field_id('facebook'); ?>"><?php echo __('Facebook link:'); ?></label>
+			<label for="<?php echo $this->get_field_id('facebook'); ?>"><?php echo __('Facebook profile/page/group link:'); ?></label>
 			<br />
 			<input type="text" id="<?php echo $this->get_field_id('facebook'); ?>" name="<?php echo $this->get_field_name('facebook'); ?>" value="<?php echo $instance['facebook']; ?>" class="widefat" />
 		</p>
 		
 		<!-- Flickr -->
 		<p>
-			<label for="<?php echo $this->get_field_id('flickr'); ?>"><?php echo __('Flickr link:'); ?></label>
+			<label for="<?php echo $this->get_field_id('flickr'); ?>"><?php echo __('Flickr profile link:'); ?></label>
 			<br />
 			<input type="text" id="<?php echo $this->get_field_id('flickr'); ?>" name="<?php echo $this->get_field_name('flickr'); ?>" value="<?php echo $instance['flickr']; ?>" class="widefat" />
+		</p>
+		
+		<!-- Google Plus -->
+		<p>
+			<label for="<?php echo $this->get_field_id('gplus'); ?>"><?php echo __('Google Plus profile/page link:'); ?></label>
+			<br />
+			<input type="text" id="<?php echo $this->get_field_id('gplus'); ?>" name="<?php echo $this->get_field_name('gplus'); ?>" value="<?php echo $instance['gplus']; ?>" class="widefat" />
 		</p>
 	
 	<?php
