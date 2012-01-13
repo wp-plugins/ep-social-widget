@@ -41,4 +41,3 @@ You can also choose to display a icon for your RSS 2.0 feed. Icons are in black 
 * Added Google Plus
 * Changed description text for the input fields in widgets settings
 * Updated screenshots & description about the plugin
-* 
