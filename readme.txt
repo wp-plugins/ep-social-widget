@@ -1,11 +1,11 @@
 === EP Social Widget ===
 Contributors: Earth People, darkwhispering
-Tags: social, widget, plugin, facebook, twitter, flickr, rss, social share, google, google plus
+Tags: social, widget, plugin, facebook, twitter, flickr, rss, social share, google, google plus, youtube
 Requires at least: 3.3.1
 Tested up to: 3.3.1
-Stable tag: 0.2.0
+Stable tag: 0.3.0
 
-Very small and easy to use widget to display social icons on your site. Facebook, Twitter, Flickr, Google Plus and RSS feed
+Very small and easy to use widget to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube and RSS feed
 
 == Description ==
 
@@ -15,8 +15,11 @@ This plugin add a new widget that you can use to add social icons on your site. 
 * Facebook
 * Flickr
 * Google Plus
+* Youtube
 
 You can also choose to display a icon for your RSS 2.0 feed. Icons are in black and white colors only.
+
+Plugin is only tested on Wordpress 3.3.1 but should work on any site running 3+
 
 == Installation ==
 
@@ -30,14 +33,20 @@ You can also choose to display a icon for your RSS 2.0 feed. Icons are in black 
 
 == Changelog ==
 
-= 0.1.0 =
-* Initial release
-
-= 0.1.1 =
-* Fixed correct file path for images and css file
-* New plugins url
+= 0.3.0 =
+* Added youtube
+* Rewritten the CSS. Now targeting the a link instead of the img tag
+* Added float clear CSS
+* Updated screenshots & plugin description
 
 = 0.2.0 =
 * Added Google Plus
 * Changed description text for the input fields in widgets settings
 * Updated screenshots & description about the plugin
+
+= 0.1.1 =
+* Fixed correct file path for images and css file
+* New plugins url
+
+= 0.1.0 =
+* Initial release

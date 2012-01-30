@@ -2,9 +2,9 @@
 /*
 Plugin Name: EP Social Widget
 Plugin URI: http://www.earthpeople.se
-Description: Very small and easy to use widget to display social icons on your site. Facebook, Twitter, Flickr, Google Plus and RSS feed
+Description: Very small and easy to use widget to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube and RSS feed
 Author: Mattias Hedman, Earth People AB
-Version: 0.2.0
+Version: 0.3.0
 Author URI: http://www.earthpeople.se
 */
 
@@ -49,6 +49,7 @@ class epSocialWidget extends WP_Widget{
 		$flickr = $instance['flickr'];
 		$rss = $instance['rss'];
 		$gplus = $instance['gplus'];
+		$youtube = $instance['youtube'];
 		
 		echo $before_widget;
 		?>
@@ -75,6 +76,10 @@ class epSocialWidget extends WP_Widget{
 			
 			<?php if($gplus) : ?>
 			<a href="<?php echo $gplus; ?>" target="_blank"><img src="<?php echo plugins_url('icon-gplus.gif', __FILE__); ?>" alt="" /></a>
+			<?php endif; ?>
+			
+			<?php if($youtube) : ?>
+			<a href="<?php echo $youtube; ?>" target="_blank"><img src="<?php echo plugins_url('icon-youtube.gif', __FILE__); ?>" alt="" /></a>
 			<?php endif; ?>
 		</div>
 		
@@ -134,12 +139,23 @@ class epSocialWidget extends WP_Widget{
 			$instance['gplus'] = '';
 		}
 		
+		if(!empty($new_instance['youtube'])) {
+			$yt = strip_tags($new_instance['youtube']);		
+			if(preg_match($pattern1, $yt) || preg_match($pattern2, $yt)){
+				$instance['youtube'] = $yt;
+			} else {
+				$instance['youtube'] = 'http://'.$yt;
+			}		
+		} else {
+			$instance['youtube'] = '';
+		}
+		
 		return $instance;
 	}
 
 	// Widget backend
 	function form($instance) {
-		$default = array('title' =>'', 'twitter'=>'','facebook'=>'','flickr'=>'','rss'=>'', 'gplus' =>'');
+		$default = array('title' =>'', 'twitter'=>'','facebook'=>'','flickr'=>'','rss'=>'', 'gplus'=>'', 'youtube'=>'');
 		$instance = wp_parse_args((array)$instance,$default);
 	?>
 		<!-- TITLE -->
@@ -184,6 +200,13 @@ class epSocialWidget extends WP_Widget{
 			<label for="<?php echo $this->get_field_id('gplus'); ?>"><?php echo __('Google Plus profile/page link:'); ?></label>
 			<br />
 			<input type="text" id="<?php echo $this->get_field_id('gplus'); ?>" name="<?php echo $this->get_field_name('gplus'); ?>" value="<?php echo $instance['gplus']; ?>" class="widefat" />
+		</p>
+		
+		<!-- Youtube -->
+		<p>
+			<label for="<?php echo $this->get_field_id('youtube'); ?>"><?php echo __('Youtube profile/page link:'); ?></label>
+			<br />
+			<input type="text" id="<?php echo $this->get_field_id('youtube'); ?>" name="<?php echo $this->get_field_name('youtube'); ?>" value="<?php echo $instance['youtube']; ?>" class="widefat" />
 		</p>
 	
 	<?php
