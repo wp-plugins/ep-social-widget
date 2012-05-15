@@ -24,7 +24,7 @@ Your are now able to show the same icons as in the widget in your posts or pages
 
 `[ep-social-widget facebook="https://facebook.com" gplus="https://plus.google.com" rss="1"]`
 
-Avaliable networks are
+Available networks are
 
 * facebook
 * gplus
