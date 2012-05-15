@@ -2,14 +2,65 @@
 /*
 Plugin Name: EP Social Widget
 Plugin URI: http://www.earthpeople.se
-Description: Very small and easy to use widget to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube and RSS feed
+Description: Very small and easy to use widget and shortcode to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube and RSS feed
 Author: Mattias Hedman, Earth People AB
-Version: 0.3.0
+Version: 0.4.0
 Author URI: http://www.earthpeople.se
 */
 
+/**
+* Shortcode
+**/
+function epsw_shortcode($args){
+	$html = '<ul class="ep_social_widget" id="epSW_shortcode">';
+	foreach($args as $network => $link) {
+		$pattern1 = '/^http:\/\//'; //
+		$pattern2 = '/^https:\/\//';
+		
+		$l = strip_tags($link);		
+		if(preg_match($pattern1, $l) || preg_match($pattern2, $l)){
+			$link = $l;
+		} else {
+			$link = 'http://'.$l;
+		}
 
+		$html .= '<li>';
+		switch($network) {
+			case 'gplus':
+				$html .= '<a href="'.$link.'" target="_blank"><img src="'.plugins_url("icon-gplus.gif", __FILE__).'" alt="" /></a>';
+				break;
 
+			case 'twitter':
+				$html .= '<a href="'.$link.'" target="_blank"><img src="'.plugins_url("icon-twitter.gif", __FILE__).'" alt="" /></a>';
+				break;
+
+			case 'facebook':
+				$html .= '<a href="'.$link.'" target="_blank"><img src="'.plugins_url("icon-facebook.gif", __FILE__).'" alt="" /></a>';
+				break;
+
+			case 'flickr':
+				$html .= '<a href="'.$link.'" target="_blank"><img src="'.plugins_url("icon-flickr.gif", __FILE__).'" alt="" /></a>';
+				break;
+
+			case 'youtube':
+				$html .= '<a href="'.$link.'" target="_blank"><img src="'.plugins_url("icon-youtube.gif", __FILE__).'" alt="" /></a>';
+				break;
+
+			case 'rss':
+				$html .= '<a href="'.get_bloginfo("rss2_url").'" target="_blank"><img src="'.plugins_url("icon-rss.gif", __FILE__).'" alt="" /></a>';
+				break;
+		}
+		$html .= '</li>';
+	}
+	$html .= '</ul>';
+
+	return $html;
+}
+add_shortcode('ep-social-widget', 'epsw_shortcode');
+
+/**
+* Widget
+**/
 // Load stylesheet and widget
 add_action('wp_head','epSocialWidgetCss');
 add_action('widgets_init','load_epSocialWidget');
@@ -214,6 +265,5 @@ class epSocialWidget extends WP_Widget{
 	}
 
 }
-
 
 ?>
