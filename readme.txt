@@ -2,7 +2,7 @@
 Contributors: Earth People, darkwhispering
 Tags: social, widget, plugin, facebook, twitter, flickr, rss, social share, google, google plus, youtube
 Requires at least: 3.3.0
-Tested up to: 3.3.2
+Tested up to: 3.4.1
 Stable tag: 0.4.0
 
 Very small and easy to use widget and shortcode to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube and RSS feed
@@ -24,7 +24,7 @@ Your are now able to show the same icons as in the widget in your posts or pages
 
 `[ep-social-widget facebook="https://facebook.com" gplus="https://plus.google.com" rss="1"]`
 
-Available networks are
+Available  networks are
 
 * facebook
 * gplus
