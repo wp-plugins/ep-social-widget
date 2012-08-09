@@ -1,11 +1,11 @@
 === EP Social Widget ===
 Contributors: Earth People, darkwhispering
-Tags: social, widget, plugin, facebook, twitter, flickr, rss, social share, google, google plus, youtube
+Tags: social, widget, plugin, facebook, twitter, flickr, rss, social share, google, google plus, youtube, linkedin, myspace, deviantart, meetup
 Requires at least: 3.3.0
 Tested up to: 3.4.1
-Stable tag: 0.4.0
+Stable tag: 0.5.0
 
-Very small and easy to use widget and shortcode to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube and RSS feed
+Very small and easy to use widget and shortcode to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube, LinkedIn, Meetup, DeviantArt, MySpace and RSS feed.
 
 == Description ==
 
@@ -16,6 +16,10 @@ This plugin add a new widget and shortcode that you can use to add social icons 
 * Flickr
 * Google Plus
 * Youtube
+* LinkedIn
+* DeviantArt
+* Meetup
+* MySpace
 
 You can also choose to display a icon for your RSS 2.0 feed. Icons are in black and white colors only.
 
@@ -32,6 +36,10 @@ Available  networks are
 * flickr
 * youtube
 * rss
+* linkedin
+* deviantart
+* meetup
+* myspace
 
 Just use the one you want to display in your post/page and give it a link. The RSS option only need a 1 as value if you want that displayed. Remove any network completely to remove it from the post/page.
 
@@ -46,6 +54,11 @@ Just use the one you want to display in your post/page and give it a link. The R
 2. Backend screenshot
 
 == Changelog ==
+
+= 0.5.0 =
+* Added new social networks, LinkedIn, DeviantArt, Meetup and MySpace
+* Added some bottom padding to the icons for good 2 row layout
+* Made the code a lot smaller, cleaner and faster
 
 = 0.4.0 =
 * Added support for shortcode in posts and pages
