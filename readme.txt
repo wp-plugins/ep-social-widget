@@ -3,7 +3,7 @@ Contributors: Earth People, darkwhispering
 Tags: social, widget, plugin, facebook, twitter, flickr, rss, social share, google, google plus, youtube, linkedin, myspace, deviantart, meetup
 Requires at least: 3.3.0
 Tested up to: 3.4.1
-Stable tag: 0.5.2
+Stable tag: 0.5.3
 
 Very small and easy to use widget and shortcode to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube and more.
 
@@ -54,6 +54,9 @@ Just use the one you want to display in your post/page and give it a link. The R
 2. Backend screenshot
 
 == Changelog ==
+
+= 0.5.3 =
+* Fixed bug in shortcode with rss icon
 
 = 0.5.2 =
 * Fixed bug where rss icon where showing even if no where selected in widget settings

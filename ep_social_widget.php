@@ -4,7 +4,7 @@ Plugin Name: EP Social Widget
 Plugin URI: http://www.earthpeople.se
 Description: Very small and easy to use widget and shortcode to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube, LinkedIn, DeviantArt, Meetup, MySpace and RSS feed
 Author: Mattias Hedman
-Version: 0.5.2
+Version: 0.5.3
 Author URI: http://www.earthpeople.se
 */
 
@@ -14,19 +14,27 @@ Author URI: http://www.earthpeople.se
 function epsw_shortcode($args){
 	$html = '<ul class="ep_social_widget" id="epSW_shortcode">';
 	foreach($args as $network => $link) {
-		$pattern1 = '/^http:\/\//'; //
-		$pattern2 = '/^https:\/\//';
-		
-		$l = strip_tags($link);		
-		if(preg_match($pattern1, $l) || preg_match($pattern2, $l)){
-			$link = $l;
+		if($network === 'rss') {
+			if($link === '1') {
+				$html .= '<li>';
+					$html .= '<a href="'.get_bloginfo("rss2_url").'" target="_blank"><img src="'.plugins_url("icon-rss.gif", __FILE__).'" alt="" /></a>';
+				$html .= '</li>';
+			}
 		} else {
-			$link = 'http://'.$l;
-		}
+			$pattern1 = '/^http:\/\//'; //
+			$pattern2 = '/^https:\/\//';
+			
+			$l = strip_tags($link);		
+			if(preg_match($pattern1, $l) || preg_match($pattern2, $l)){
+				$link = $l;
+			} else {
+				$link = 'http://'.$l;
+			}
 
-		$html .= '<li>';
-			$html .= '<a href="'.$link.'" target="_blank"><img src="'.plugins_url("icon-".$network.".gif", __FILE__).'" alt="" /></a>';
-		$html .= '</li>';
+			$html .= '<li>';
+				$html .= '<a href="'.$link.'" target="_blank"><img src="'.plugins_url("icon-".$network.".gif", __FILE__).'" alt="" /></a>';
+			$html .= '</li>';
+		}
 	}
 	$html .= '</ul>';
 
