@@ -4,7 +4,7 @@ Plugin Name: EP Social Widget
 Plugin URI: http://www.earthpeople.se
 Description: Very small and easy to use widget and shortcode to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube, LinkedIn, DeviantArt, Meetup, MySpace and RSS feed
 Author: Mattias Hedman
-Version: 0.5.0
+Version: 0.5.1
 Author URI: http://www.earthpeople.se
 */
 
@@ -70,7 +70,7 @@ class epSocialWidget extends WP_Widget{
 		extract($args);
 		
 		//User selected settings
-		$title 		= $instance['title'];
+		$title = $instance['title'];
 		unset($instance['title']);
 		
 		echo $before_widget;
@@ -107,11 +107,13 @@ class epSocialWidget extends WP_Widget{
 		unset($new_instance['rss']);
 
 		foreach($new_instance as $key => $new) {
-			$link = strip_tags($new);
-			if(preg_match($pattern1,$link) || preg_match($pattern2,$link)) {
-				$instance[$key] = $link;
-			} else {
-				$instance[$key] = 'http://'.$link;
+			if($new) {
+				$link = strip_tags($new);
+				if(preg_match($pattern1,$link) || preg_match($pattern2,$link)) {
+					$instance[$key] = $link;
+				} else {
+					$instance[$key] = 'http://'.$link;
+				}
 			}
 		}
 		
@@ -120,6 +122,19 @@ class epSocialWidget extends WP_Widget{
 
 	// Widget backend
 	function form($instance) {
+		$default = array(
+			'title'		=> '',
+			'twitter'		=> '',
+			'facebook'	=> '',
+			'flickr' 		=> '',
+			'gplus'		=> '',
+			'youtube'		=> '',
+			'linkedin'	=> '',
+			'deviantart' 	=> '',
+			'meetup' 		=> '',
+			'myspace'		=> ''
+		);
+		$instance = wp_parse_args((array)$instance,$default);
 	?>
 		<!-- TITLE -->
 		<p>

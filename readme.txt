@@ -3,9 +3,9 @@ Contributors: Earth People, darkwhispering
 Tags: social, widget, plugin, facebook, twitter, flickr, rss, social share, google, google plus, youtube, linkedin, myspace, deviantart, meetup
 Requires at least: 3.3.0
 Tested up to: 3.4.1
-Stable tag: 0.5.0
+Stable tag: 0.5.1
 
-Very small and easy to use widget and shortcode to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube, LinkedIn, Meetup, DeviantArt, MySpace and RSS feed.
+Very small and easy to use widget and shortcode to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube and more.
 
 == Description ==
 
@@ -54,6 +54,10 @@ Just use the one you want to display in your post/page and give it a link. The R
 2. Backend screenshot
 
 == Changelog ==
+
+= 0.5.1 =
+* Fixed bug for widget empty after 0.5.0 version update
+* Fixed bug with all icons showing after 0.5.0 version update
 
 = 0.5.0 =
 * Added new social networks, LinkedIn, DeviantArt, Meetup and MySpace
