@@ -2,9 +2,9 @@
 /*
 Plugin Name: EP Social Widget
 Plugin URI: http://www.earthpeople.se
-Description: Very small and easy to use widget and shortcode to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube, LinkedIn, DeviantArt, Meetup, MySpace and RSS feed
+Description: Very small and easy to use widget and shortcode to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube, LinkedIn, DeviantArt, Meetup, MySpace, Soundcloud, Bandcamp and RSS feed
 Author: Mattias Hedman
-Version: 0.5.3
+Version: 0.6.0
 Author URI: http://www.earthpeople.se
 */
 
@@ -142,7 +142,9 @@ class epSocialWidget extends WP_Widget{
 			'linkedin'	=> '',
 			'deviantart' 	=> '',
 			'meetup' 		=> '',
-			'myspace'		=> ''
+			'myspace'		=> '',
+			'bandcamp'	=> '',
+			'soundcloud'	=> ''
 		);
 		$instance = wp_parse_args((array)$instance,$default);
 	?>
