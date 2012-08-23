@@ -4,24 +4,33 @@ Plugin Name: EP Social Widget
 Plugin URI: http://www.earthpeople.se
 Description: Very small and easy to use widget and shortcode to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube, LinkedIn, DeviantArt, Meetup, MySpace, Soundcloud, Bandcamp and RSS feed
 Author: Mattias Hedman
-Version: 0.6.0
+Version: 1.0.0
 Author URI: http://www.earthpeople.se
 */
 
-/**
-* Shortcode
-**/
+// ====================
+// = Plugin shortcode =
+// ====================
+
 function epsw_shortcode($args){
+	// User uploaded icon url
+	$wp_upload_dir = wp_upload_dir();
+	$iconurl = $wp_upload_dir['baseurl'].'/epsocial_icons/';
+	$icondir = $wp_upload_dir['basedir'].'/epsocial_icons/';
+
+	// Plugin path
+	$plugin_path = WP_PLUGIN_DIR.DIRECTORY_SEPARATOR.str_replace(basename(__FILE__),"",plugin_basename(__FILE__));
+
 	$html = '<ul class="ep_social_widget" id="epSW_shortcode">';
 	foreach($args as $network => $link) {
 		if($network === 'rss') {
 			if($link === '1') {
 				$html .= '<li>';
-					$html .= '<a href="'.get_bloginfo("rss2_url").'" target="_blank"><img src="'.plugins_url("icon-rss.gif", __FILE__).'" alt="" /></a>';
+					$html .= '<a href="'.get_bloginfo("rss2_url").'" target="_blank"><img src="'.plugins_url("icons/icon-rss.gif", __FILE__).'" alt="" /></a>';
 				$html .= '</li>';
 			}
 		} else {
-			$pattern1 = '/^http:\/\//'; //
+			$pattern1 = '/^http:\/\//';
 			$pattern2 = '/^https:\/\//';
 			
 			$l = strip_tags($link);		
@@ -31,9 +40,17 @@ function epsw_shortcode($args){
 				$link = 'http://'.$l;
 			}
 
+
 			$html .= '<li>';
-				$html .= '<a href="'.$link.'" target="_blank"><img src="'.plugins_url("icon-".$network.".gif", __FILE__).'" alt="" /></a>';
+
+			if(file_exists($plugin_path."/icons/icon-".$network.".gif")) {
+				$html .= '<a href="'.$link.'" target="_blank"><img src="'.plugins_url("icons/icon-".$network.".gif", __FILE__).'" alt="" /></a>';
+			} elseif (file_exists($icondir."icon-".$network.".gif")) {
+				$html .= '<a href="'.$link.'" target="_blank"><img src="'.$iconurl.'icon-'.$network.'.gif" alt="" /></a>';
+			}
+
 			$html .= '</li>';
+
 		}
 	}
 	$html .= '</ul>';
@@ -42,9 +59,10 @@ function epsw_shortcode($args){
 }
 add_shortcode('ep-social-widget', 'epsw_shortcode');
 
-/**
-* Widget
-**/
+
+// =================
+// = Plugin widget =
+// =================
 // Load stylesheet and widget
 add_action('wp_head','epSocialWidgetCss');
 add_action('widgets_init','load_epSocialWidget');
@@ -76,6 +94,14 @@ class epSocialWidget extends WP_Widget{
 	// Widget frontend
 	function widget($args,$instance) {
 		extract($args);
+
+		// User uploaded icon url
+		$wp_upload_dir = wp_upload_dir();
+		$this->iconurl = $wp_upload_dir['baseurl'].'/epsocial_icons/';
+		$this->icondir = $wp_upload_dir['basedir'].'/epsocial_icons/';
+
+		// Plugin path
+		$this->plugin_path = WP_PLUGIN_DIR.DIRECTORY_SEPARATOR.str_replace(basename(__FILE__),"",plugin_basename(__FILE__));
 		
 		//User selected settings
 		$title = $instance['title'];
@@ -92,10 +118,14 @@ class epSocialWidget extends WP_Widget{
 				foreach($instance as $network => $link) {
 					if($network === 'rss') {
 						if($link === '1') {
-							echo '<a href="'.get_bloginfo("rss2_url").'" target="_blank"><img src="'.plugins_url("icon-rss.gif", __FILE__).'" alt="" /></a>';
+							echo '<a href="'.get_bloginfo("rss2_url").'" target="_blank"><img src="'.plugins_url("icons/icon-rss.gif", __FILE__).'" alt="" /></a>';
 						}
 					} else {
-						echo '<a href="'.$link.'" target="_blank"><img src="'.plugins_url("icon-".$network.".gif", __FILE__).'" alt="" /></a>';
+						if(file_exists($this->plugin_path."/icons/icon-".$network.".gif")) {
+							echo '<a href="'.$link.'" target="_blank"><img src="'.plugins_url("icons/icon-".$network.".gif", __FILE__).'" alt="" /></a>';
+						} elseif (file_exists($this->icondir."icon-".$network.".gif")) {
+							echo '<a href="'.$link.'" target="_blank"><img src="'.$this->iconurl.'icon-'.$network.'.gif" alt="" /></a>';
+						}
 					}
 				}
 			?>
@@ -133,20 +163,35 @@ class epSocialWidget extends WP_Widget{
 	// Widget backend
 	function form($instance) {
 		$default = array(
-			'title'		=> '',
+			'title' 		=> '',
 			'twitter'		=> '',
-			'facebook'	=> '',
+			'facebook' 	=> '',
 			'flickr' 		=> '',
-			'gplus'		=> '',
-			'youtube'		=> '',
-			'linkedin'	=> '',
+			'gplus' 		=> '',
+			'youtube' 	=> '',
+			'linkedin' 	=> '',
 			'deviantart' 	=> '',
 			'meetup' 		=> '',
-			'myspace'		=> '',
-			'bandcamp'	=> '',
-			'soundcloud'	=> ''
+			'myspace' 	=> '',
+			'bandcamp' 	=> '',
+			'soundcloud' 	=> ''
 		);
 		$instance = wp_parse_args((array)$instance,$default);
+
+		// Check for user added networks
+		$wp_upload_dir = wp_upload_dir();
+		$this->icondir = $wp_upload_dir['basedir'].'/epsocial_icons/';
+		$icons = scandir($this->icondir);
+
+		// Plugin path
+		$this->plugin_path = WP_PLUGIN_DIR.DIRECTORY_SEPARATOR.str_replace(basename(__FILE__),"",plugin_basename(__FILE__));
+
+		unset($icons[0]);
+		unset($icons[1]);
+
+		foreach($icons as $icon) {
+			$networks[] = str_replace('icon-','',str_replace('.gif','',$icon));
+		}
 	?>
 		<!-- TITLE -->
 		<p>
@@ -164,21 +209,48 @@ class epSocialWidget extends WP_Widget{
 			<input type="radio" id="<?php echo $this->get_field_id('rss'); ?>" name="<?php echo $this->get_field_name('rss'); ?>" <?php if($instance['rss'] == 0): ?> checked="checked" <?php endif; ?> value="0" /> <?php echo __('No'); ?>
 		</p>
 
-		<?php
+		<?php if($networks) : ?>
+			<h4>User added networks</h4>
+			<?php
+			foreach($networks as $network) :
+			?>
+				<p>
+					<label for="<?php echo $this->get_field_id($network); ?>"><?php echo __($network.' profile link:'); ?></label>
+					<br />
+					<input type="text" id="<?php echo $this->get_field_id($network); ?>" name="<?php echo $this->get_field_name($network); ?>" value="<?php echo $instance[$network]; ?>" class="widefat" />
+				</p>
+			<?php
+			unset($instance[$network]);
+			endforeach;
+		endif;
+
 		unset($instance['title']);
 		unset($instance['rss']);
-
-		foreach($instance as $network => $value) :
+		unset($instance['0']);
 		?>
+
+		<h4>Default networks</h4>
+
+		<?php
+		foreach($instance as $network => $value) :
+			if(file_exists($this->plugin_path."/icons/icon-".$network.".gif")) :
+			?>
 			<p>
 				<label for="<?php echo $this->get_field_id($network); ?>"><?php echo __($network.' profile link:'); ?></label>
 				<br />
 				<input type="text" id="<?php echo $this->get_field_id($network); ?>" name="<?php echo $this->get_field_name($network); ?>" value="<?php echo $value; ?>" class="widefat" />
 			</p>
-		<?php
+			<?php
+			endif;
 		endforeach;
 	}
-
 }
+
+
+// ========================
+// = Plugin settings page =
+// ========================
+
+include('ep_social_settings.php');
 
 ?>
