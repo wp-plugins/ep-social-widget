@@ -98,6 +98,8 @@ class epSocialSettings {
 	}
 
 	private function get_user_networks() {
+		if(!file_exists($this->icondir)) return NULL;
+
 		$icons = scandir($this->icondir);
 
 		unset($icons[0]);
