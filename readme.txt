@@ -2,14 +2,16 @@
 Contributors: Earth People, darkwhispering
 Tags: social, widget, plugin, facebook, twitter, flickr, rss, social share, google, google plus, youtube, linkedin, myspace, deviantart, meetup, soundcloud, bandcamp
 Requires at least: 3.3.0
-Tested up to: 3.4.1
-Stable tag: 0.6.0
+Tested up to: 3.4.2
+Stable tag: 1.1.1
 
 Very small and easy to use widget and shortcode to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube and more.
 
 == Description ==
 
-This plugin add a new widget and shortcode that you can use to add social icons on your site. Available networks are
+This plugin add a new widget and shortcode that you can use to add social icons on your site by using the default networks or add your own via the option page.
+
+Available default networks are
 
 * Twitter
 * Facebook
@@ -26,11 +28,11 @@ This plugin add a new widget and shortcode that you can use to add social icons 
 You can also choose to display a icon for your RSS 2.0 feed. Icons are in black and white colors only.
 
 **Shortcode - How to**
-Your are now able to show the same icons as in the widget in your posts or pages with the new shortcode.
+Your are able to show the same icons as in the widget in your posts or pages with the shortcode.
 
 `[ep-social-widget facebook="https://facebook.com" gplus="https://plus.google.com" rss="1"]`
 
-Available  networks are
+Available networks are
 
 * facebook
 * gplus
@@ -47,7 +49,7 @@ Available  networks are
 
 Just use the one you want to display in your post/page and give it a link. The RSS option only need a 1 as value if you want that displayed. Remove any network completely to remove it from the post/page.
 
-*After requests of adding social networks that is country specific we have decided that the plugin will only contain the larger known networks in the world. We are working on a version of the plugin where you can add your own icon for any network you want to add. There is no date when this will be done tho, but we are working on it.*
+To display a network you have added yourself, just use the network name displayed in the list at the option page.
 
 == Installation ==
 
@@ -58,8 +60,26 @@ Just use the one you want to display in your post/page and give it a link. The R
 
 1. Frontend screenshot
 2. Backend screenshot
+3. Option page
 
 == Changelog ==
+
+= 1.1.1 =
+* Found error in the shortcode short after releasing version 1.1.0, fixed in this update.
+
+= 1.1.0 =
+* Now allowing gif, png and jpg images to be uploaded and used as icons.
+* Automatic update scripts added to prevent the widget to break when updating from a version lower then 1.1.0.
+
+= 1.0.2 =
+* Removed the error displaying in the widget if the epsocial_icon folder did not exist in the uploads folder.
+
+= 1.0.1 =
+* Removed the error displaying if the epsocial_icon folder did not exist in the uploads folder.
+
+= 1.0.0 =
+* Added an option page to give you the ability to add any network of your choosing
+* Moved all default icons into a folder
 
 = 0.6.0 =
 * Added soundcloud and bandcamp after request
