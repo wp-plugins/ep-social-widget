@@ -4,9 +4,18 @@ Plugin Name: EP Social Widget
 Plugin URI: http://www.earthpeople.se
 Description: Very small and easy to use widget and shortcode to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube, LinkedIn, DeviantArt, Meetup, MySpace, Soundcloud, Bandcamp and RSS feed
 Author: Mattias Hedman
-Version: 1.0.2
+Version: 1.1.0
 Author URI: http://www.earthpeople.se
 */
+
+add_action('init','epSocialWidgetVersion',1);
+function epSocialWidgetVersion()
+{
+	if (get_option('ep-social-widget-version') != '1.1.0') {
+		update_option('ep-social-widget-old-version', get_option('ep-social-widget-version'));
+		update_option('ep-social-widget-version','1.1.0');
+	}
+}
 
 // ====================
 // = Plugin shortcode =
@@ -88,20 +97,47 @@ class epSocialWidget extends WP_Widget{
 		
 		//Create widget
 		$this->WP_Widget('epsocialwidget',__('EP Social Widget'),$widget_ops,$control_ops);
-		
+
+		// Plugin path
+		$this->plugin_path = WP_PLUGIN_DIR.DIRECTORY_SEPARATOR.str_replace(basename(__FILE__),"",plugin_basename(__FILE__));
+
+		// User uploaded icon url
+		$wp_upload_dir = wp_upload_dir();
+		$this->iconurl = $wp_upload_dir['baseurl'].'/epsocial_icons/';
+		$this->icondir = $wp_upload_dir['basedir'].'/epsocial_icons/';
 	}
 	
 	// Widget frontend
 	function widget($args,$instance) {
 		extract($args);
 
-		// User uploaded icon url
-		$wp_upload_dir = wp_upload_dir();
-		$this->iconurl = $wp_upload_dir['baseurl'].'/epsocial_icons/';
-		$this->icondir = $wp_upload_dir['basedir'].'/epsocial_icons/';
+		/* If we just upgraded from v1.0.2 or lower to v1.1.0 we need to update the instance array */
+		if (get_option('ep-social-widget-old-version') <= '1.1.0') {
+			$v_upgrade = get_option('ep-social-widget-1.0.2to1.1.0');
+			if (!$v_upgrade) {
+				$title = $instance['title'];
+				$rss = $instance['rss'];
+				unset($instance['title']);
+				unset($instance['rss']);
+				$count_networks = count($instance);			
+				foreach ($instance as $network => $url) {
+					$link = $url;
+					$instance[$network] = '';
+					$instance[$network]['link'] = $link;
+				}
 
-		// Plugin path
-		$this->plugin_path = WP_PLUGIN_DIR.DIRECTORY_SEPARATOR.str_replace(basename(__FILE__),"",plugin_basename(__FILE__));
+				$icons = $this->get_icons();
+				foreach ($icons as $icon) {
+					$ext = pathinfo($icon, PATHINFO_EXTENSION);
+					$name = str_replace('icon-','',str_replace('.'.$ext,'',$icon));
+					$instance[$name]['icon'] = $icon;
+				}
+
+				$instance['title'] = $title;
+				$instance['rss'] = $rss;
+				$i++;
+			}
+		}
 		
 		//User selected settings
 		$title = $instance['title'];
@@ -115,16 +151,16 @@ class epSocialWidget extends WP_Widget{
 			<?php echo $before_title . $title . $after_title; ?>
 
 			<?php
-				foreach($instance as $network => $link) {
+				foreach($instance as $network => $data) {
 					if($network === 'rss') {
-						if($link === '1') {
+						if($data === '1') {
 							echo '<a href="'.get_bloginfo("rss2_url").'" target="_blank"><img src="'.plugins_url("icons/icon-rss.gif", __FILE__).'" alt="" /></a>';
 						}
 					} else {
-						if(file_exists($this->plugin_path."/icons/icon-".$network.".gif")) {
-							echo '<a href="'.$link.'" target="_blank"><img src="'.plugins_url("icons/icon-".$network.".gif", __FILE__).'" alt="" /></a>';
-						} elseif (file_exists($this->icondir."icon-".$network.".gif")) {
-							echo '<a href="'.$link.'" target="_blank"><img src="'.$this->iconurl.'icon-'.$network.'.gif" alt="" /></a>';
+						if (!isset($data['icon'])) {
+							echo '<a href="'.$data['link'].'" target="_blank"><img src="'.plugins_url("icons/icon-".$network.".gif", __FILE__).'" alt="" /></a>';
+						} else {
+							echo '<a href="'.$data['link'].'" target="_blank"><img src="'.$this->iconurl.$data['icon'].'" alt="" /></a>';
 						}
 					}
 				}
@@ -137,6 +173,27 @@ class epSocialWidget extends WP_Widget{
 	
 	// Widget update
 	function update($new_instance,$instance) {
+		/* If we just upgraded from v1.0.2 or lower to v1.1.0 we need to update the instance array */
+		if (get_option('ep-social-widget-old-version') <= '1.1.0') {
+			$v_upgrade = get_option('ep-social-widget-1.0.2to1.1.0');
+			if (!$v_upgrade) {
+				$title = $instance['title'];
+				$rss = $instance['rss'];
+				unset($instance['title']);
+				unset($instance['rss']);
+				$count_networks = count($instance);			
+				foreach ($instance as $network => $url) {
+					$link = $url;
+					$instance[$network] = '';
+					$instance[$network]['link'] = $link;
+				}
+				$instance['title'] = $title;
+				$instance['rss'] = $rss;
+				$i++;
+			}
+		}
+
+
 		$pattern1 = '/^http:\/\//'; //
 		$pattern2 = '/^https:\/\//';
 		
@@ -148,55 +205,79 @@ class epSocialWidget extends WP_Widget{
 
 		foreach($new_instance as $key => $new) {
 			if($new) {
+				if(file_exists($this->icondir.'icon-'.$key.'.png')) {
+					$instance[$key]['icon'] = 'icon-'.$key.'.png';
+				} elseif (file_exists($this->icondir.'icon-'.$key.'.jpg')) {
+					$instance[$key]['icon'] = 'icon-'.$key.'.jpg';
+				} elseif (file_exists($this->icondir.'icon-'.$key.'.gif')) {
+					$instance[$key]['icon'] = 'icon-'.$key.'.gif';
+				}
+
 				$link = strip_tags($new);
 				if(preg_match($pattern1,$link) || preg_match($pattern2,$link)) {
-					$instance[$key] = $link;
+					$instance[$key]['link'] = $link;
 				} else {
-					$instance[$key] = 'http://'.$link;
+					$instance[$key]['link'] = 'http://'.$link;
 				}
 			}
 		}
+
+		$v_upgrade = get_option('ep-social-widget-1.0.2to1.1.0');
+		if (!$v_upgrade) update_option('ep-social-widget-1.0.2to1.1.0','true');
 		
 		return $instance;
 	}
 
 	// Widget backend
 	function form($instance) {
+		/* If we just upgraded from v1.0.2 or lower to v1.1.0 we need to update the instance array */
+		if (get_option('ep-social-widget-old-version') <= '1.1.0') {
+			$v_upgrade = get_option('ep-social-widget-1.0.2to1.1.0');
+			if (!$v_upgrade) {
+				$title = $instance['title'];
+				$rss = $instance['rss'];
+				unset($instance['title']);
+				unset($instance['rss']);
+				$count_networks = count($instance);			
+				foreach ($instance as $network => $url) {
+					$link = $url;
+					$instance[$network] = '';
+					$instance[$network]['link'] = $link;
+				}
+				$instance['title'] = $title;
+				$instance['rss'] = $rss;
+				$i++;
+			}
+		}
+
 		$default = array(
 			'title' 		=> '',
-			'twitter'		=> '',
-			'facebook' 	=> '',
-			'flickr' 		=> '',
-			'gplus' 		=> '',
-			'youtube' 	=> '',
-			'linkedin' 	=> '',
-			'deviantart' 	=> '',
-			'meetup' 		=> '',
-			'myspace' 	=> '',
-			'bandcamp' 	=> '',
-			'soundcloud' 	=> ''
+			'rss'			=> '',
+			'twitter'		=> array('link' => ''),
+			'facebook' 		=> array('link' => ''),
+			'flickr' 		=> array('link' => ''),
+			'gplus' 		=> array('link' => ''),
+			'youtube' 		=> array('link' => ''),
+			'linkedin' 		=> array('link' => ''),
+			'deviantart' 	=> array('link' => ''),
+			'meetup' 		=> array('link' => ''),
+			'myspace' 		=> array('link' => ''),
+			'bandcamp' 		=> array('link' => ''),
+			'soundcloud' 	=> array('link' => '')
 		);
 		$instance = wp_parse_args((array)$instance,$default);
 
-		// Check for user added networks
-		$wp_upload_dir = wp_upload_dir();
-		$this->icondir = $wp_upload_dir['basedir'].'/epsocial_icons/';
-
-		if(!file_exists($this->icondir)) {
-			$icons = NULL;
-		} else {
-			$icons = scandir($this->icondir);
-		}
-
-		// Plugin path
-		$this->plugin_path = WP_PLUGIN_DIR.DIRECTORY_SEPARATOR.str_replace(basename(__FILE__),"",plugin_basename(__FILE__));
+		$icons = $this->get_icons();
 
 		unset($icons[0]);
 		unset($icons[1]);
 
 		if($icons) {
 			foreach($icons as $icon) {
-				$networks[] = str_replace('icon-','',str_replace('.gif','',$icon));
+				$ext = pathinfo($icon, PATHINFO_EXTENSION);
+				$name = str_replace('icon-','',str_replace('.'.$ext,'',$icon));
+
+				$networks[] = $name;
 			}
 		}
 	?>
@@ -222,9 +303,9 @@ class epSocialWidget extends WP_Widget{
 			foreach($networks as $network) :
 			?>
 				<p>
-					<label for="<?php echo $this->get_field_id($network); ?>"><?php echo __($network.' profile link:'); ?></label>
+					<label for="<?php echo $this->get_field_id($network); ?>"><?php echo __(str_replace('_',' ',$network).' profile link:'); ?></label>
 					<br />
-					<input type="text" id="<?php echo $this->get_field_id($network); ?>" name="<?php echo $this->get_field_name($network); ?>" value="<?php echo $instance[$network]; ?>" class="widefat" />
+					<input type="text" id="<?php echo $this->get_field_id($network); ?>" name="<?php echo $this->get_field_name($network); ?>" value="<?php echo $instance[$network]['link']; ?>" class="widefat" />
 				</p>
 			<?php
 			unset($instance[$network]);
@@ -239,20 +320,30 @@ class epSocialWidget extends WP_Widget{
 		<h4>Default networks</h4>
 
 		<?php
-		foreach($instance as $network => $value) :
+		foreach($instance as $network => $link) :
+
 			if(file_exists($this->plugin_path."/icons/icon-".$network.".gif")) :
 			?>
 			<p>
 				<label for="<?php echo $this->get_field_id($network); ?>"><?php echo __($network.' profile link:'); ?></label>
 				<br />
-				<input type="text" id="<?php echo $this->get_field_id($network); ?>" name="<?php echo $this->get_field_name($network); ?>" value="<?php echo $value; ?>" class="widefat" />
+				<input type="text" id="<?php echo $this->get_field_id($network); ?>" name="<?php echo $this->get_field_name($network); ?>" value="<?php echo $link['link']; ?>" class="widefat" />
 			</p>
 			<?php
 			endif;
 		endforeach;
 	}
-}
 
+	private function get_icons() {
+		if(!file_exists($this->icondir)) {
+			$icons = NULL;
+		} else {
+			$icons = scandir($this->icondir);
+		}
+
+		return $icons;
+	}
+}
 
 // ========================
 // = Plugin settings page =

@@ -66,13 +66,13 @@ class epSocialSettings {
 							foreach($networks as $network) :
 							?>
 								<tr>
-									<td><?php echo $network; ?></td>
-									<td><img src="<?php echo $this->iconurl; ?>icon-<?php echo $network; ?>.gif" alt="<?php echo $network; ?>" style="max-height:70px"></td>
+									<td><?php echo $network['name']; ?></td>
+									<td><img src="<?php echo $this->iconurl; ?><?php echo $network['icon']; ?>" alt="<?php echo $network['name']; ?>" style="max-height:70px"></td>
 									<td>
 										<div class="row-actions">
 											<span class="delete">
 												<form method="post">
-													<input type="hidden" name="network" value="<?php echo $network; ?>">
+													<input type="hidden" name="icon" value="<?php echo $network['icon']; ?>">
 													<input type="submit" value="delete" name="delete">
 												</form>
 											</span>
@@ -106,16 +106,22 @@ class epSocialSettings {
 		unset($icons[1]);
 
 		foreach($icons as $icon) {
-			$networks[] = str_replace('icon-','',str_replace('.gif','',$icon));
+			$ext = pathinfo($icon, PATHINFO_EXTENSION);
+			$name = str_replace('icon-','',str_replace('.'.$ext,'',$icon));
+
+			$networks[] = array(
+				'name' => $name,
+				'icon' => $icon
+			);
 		}
 
 		return $networks;
 	}
 
 	private function epsocial_delete($data) {
-		$network = $data['network'];
+		$icon = $data['icon'];
 
-		if (unlink($this->icondir.'icon-'.$network.'.gif')) {
+		if (unlink($this->icondir.$icon)) {
 			return array(
 				'status' => 'updated',
 				'msg' => array(
@@ -135,20 +141,18 @@ class epSocialSettings {
 	}
 	
 	private function epsocial_save($data) {
-
-		// Clean network name
-		$network = $this->get_slug($data['network_name']);
-
 		// Icon
 		$icon = $_FILES['icon'];
 
-		// Validate if the icon is .gif and not larger then 1MB in size
-		if(!preg_match('![a-z0-9\-\.\/]+\.(?:gif)!Ui' , $icon['name'])) {
-			$error[] = 'Only gif images are allowed';
-		} else if($icon['size'] > 1000000) {
-			$error[] = 'Maximum size allowed is 1MB';
-		} else {
-			$filecheck = 'true';
+		// Validate if the icon is gif, png or jpg and not larger then 1MB in size
+		if (!preg_match('![a-z0-9\-\.\/]+\.(?:gif|png|jpg)!Ui' , $icon['name'])) {
+			$error[] = 'Only gif, png, jpg images are allowed';
+		}
+		if ($icon['size'] > 2000000) {
+			$error[] = 'Maximum size allowed is 2MB';
+		}
+		if (empty($data['network_name'])) {
+			$error[] = 'You must enter a network name';
 		}
 
 		// Check if we have any error and if so, return them and stop the script, else, continue
@@ -158,9 +162,7 @@ class epSocialSettings {
 				'msg'	=> $error
 			);
 			die();
-		} else if($filecheck === 'true') {
-			// $wp_upload_dir = wp_upload_dir();
-			// $icondir = $wp_upload_dir['basedir'].'/epsocial_icons/';
+		} else {
 
 			if(!is_dir($this->icondir)) {
 				mkdir($this->icondir);
@@ -169,9 +171,13 @@ class epSocialSettings {
 				chmod($this->icondir, 0755);
 			}
 
-			$new_name = 'icon-'.$network.'.gif';
+			// Clean network name
+			$network 	= $this->get_slug($data['network_name']);
+			$ext 		= pathinfo($icon['name'], PATHINFO_EXTENSION);
+			$new_name 	= 'icon-'.$network.'.'.$ext;
 			$uploadfile = $this->icondir.basename($new_name);
-			$movefile = move_uploaded_file($icon['tmp_name'],$uploadfile);
+			$movefile 	= move_uploaded_file($icon['tmp_name'],$uploadfile);
+
 			if($movefile) {
 				return array(
 					'status' => 'updated',
