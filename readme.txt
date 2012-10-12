@@ -3,7 +3,7 @@ Contributors: Earth People, darkwhispering
 Tags: social, widget, plugin, facebook, twitter, flickr, rss, social share, google, google plus, youtube, linkedin, myspace, deviantart, meetup, soundcloud, bandcamp
 Requires at least: 3.3.0
 Tested up to: 3.4.2
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 
 Very small and easy to use widget and shortcode to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube and more.
 
@@ -64,9 +64,12 @@ To display a network you have added yourself, just use the network name displaye
 
 == Changelog ==
 
+= 1.1.1 =
+* Found error in the shortcode short after releasing version 1.1.0, fixed in this update.
+
 = 1.1.0 =
-* Now allowing gif, png and jpg images to be uploaded and used as icons
-* Automatic update scripts added to prevent the widget to break when updating from a version lower then 1.1.0
+* Now allowing gif, png and jpg images to be uploaded and used as icons.
+* Automatic update scripts added to prevent the widget to break when updating from a version lower then 1.1.0.
 
 = 1.0.2 =
 * Removed the error displaying in the widget if the epsocial_icon folder did not exist in the uploads folder.
