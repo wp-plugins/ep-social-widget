@@ -4,16 +4,17 @@ Plugin Name: EP Social Widget
 Plugin URI: http://www.earthpeople.se
 Description: Very small and easy to use widget and shortcode to display social icons on your site. Facebook, Twitter, Flickr, Google Plus, Youtube, LinkedIn, DeviantArt, Meetup, MySpace, Soundcloud, Bandcamp and RSS feed
 Author: Mattias Hedman
-Version: 1.1.2
+Version: 1.1.3
 Author URI: http://www.earthpeople.se
 */
+define('EPS_VERSION','1.1.3');
 
 add_action('init','epSocialWidgetVersion',1);
 function epSocialWidgetVersion()
 {
-	if (get_option('ep-social-widget-version') != '1.1.0') {
+	if (get_option('ep-social-widget-version') != EPS_VERSION) {
 		update_option('ep-social-widget-old-version', get_option('ep-social-widget-version'));
-		update_option('ep-social-widget-version','1.1.0');
+		update_option('ep-social-widget-version',EPS_VERSION);
 	}
 }
 
@@ -61,11 +62,13 @@ function epsw_shortcode($args){
 					$icons = scandir($icondir);
 				}
 
-				foreach ($icons as $icon) {
-					$ext = pathinfo($icon, PATHINFO_EXTENSION);
-					$name = str_replace('icon-','',str_replace('.'.$ext,'',$icon));
-					if ($name == $network) {
-						$html .= '<a href="'.$link.'" target="_blank"><img src="'.$iconurl.'icon-'.$network.'.'.$ext.'" alt="" /></a>';
+				if($icons) {
+					foreach ($icons as $icon) {
+						$ext = pathinfo($icon, PATHINFO_EXTENSION);
+						$name = str_replace('icon-','',str_replace('.'.$ext,'',$icon));
+						if ($name == $network) {
+							$html .= '<a href="'.$link.'" target="_blank"><img src="'.$iconurl.'icon-'.$network.'.'.$ext.'" alt="" /></a>';
+						}
 					}
 				}
 			}
@@ -174,7 +177,11 @@ class epSocialWidget extends WP_Widget{
 						if (!isset($data['icon'])) {
 							echo '<a href="'.$data['link'].'" target="_blank"><img src="'.plugins_url("icons/icon-".$network.".gif", __FILE__).'" alt="" /></a>';
 						} else {
-							echo '<a href="'.$data['link'].'" target="_blank"><img src="'.$this->iconurl.$data['icon'].'" alt="" /></a>';
+							if (!file_exists($this->icondir.$data['icon'])) {
+								unset($instance[$network]);
+							} else {
+								echo '<a href="'.$data['link'].'" target="_blank"><img src="'.$this->iconurl.$data['icon'].'" alt="" /></a>';
+							}
 						}
 					}
 				}
