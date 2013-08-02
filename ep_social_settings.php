@@ -41,7 +41,7 @@ class epSocialSettings {
 			
 			<h2>Add new network</h2>
 			<p>
-				The default icon is 25x25 pixels. The upload does NOT resize your images so if you want your icons in the same size you have to resize them yourself in an application like photoshop. If you wish to have larger icons for you own added networks that is possible and your are welcome to use it.
+				The default icon is 25x25 pixels. The upload does <strong>NOT</strong> resize your images so if you want your icons in the same size you have to resize them yourself in an application like photoshop. If you wish to have larger icons for you own added networks that is possible and your are welcome to use it.
 			</p>
 			<form method="post" enctype="multipart/form-data">
 				<div class="form-row">
@@ -213,10 +213,3 @@ function epsocial_menu() {
 	add_submenu_page('options-general.php', 'EP Social Widget Settings', 'EP Social Widget', 'manage_options', 'ep-social-widget', 'epsocial_settings');
 }
 add_action('admin_menu','epsocial_menu');
-
-// function epsocial_admin_css() {
-// 	wp_register_style('epsocial_css', plugins_url('css/admin.css', __FILE__));
-// 	wp_enqueue_style('epsocial_css');
-// }
-// add_action('admin_init','epsocial_admin_css');
-?>
